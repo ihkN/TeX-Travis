@@ -1,0 +1,20 @@
+sudo: required
+dist: trusty
+before_install:
+- sudo apt-get -qq update && sudo apt-get install -y --no-install-recommends texlive-fonts-recommended texlive-latex-extra texlive-fonts-extra dvipng texlive-latex-recommended
+script:
+- mkdir _build
+- pdflatex -interaction=nonstopmode -halt-on-error -output-directory _build tex/main.tex
+before_deploy:
+  - git config --local user.name "ihkN"
+  - git config --local user.email "Johann.Wiebe1@gmail.com"
+  - git tag "$TRAVIS_BRANCH.$TRAVIS_BUILD_NUMBER"
+  - ls -R
+deploy:
+  provider: releases
+  api_key:
+    secure: "55b248a35a7c841eabb973ff5b88d8f9cbf9099a"
+  file: "_build/main.pdf"
+  skip_cleanup: true
+  on:
+    tags: $TRAVIS_TAG
